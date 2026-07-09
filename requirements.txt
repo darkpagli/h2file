@@ -1,0 +1,9 @@
+h2
+beautifulsoup4
+rich
+requests
+user_agent
+httpx[http2]
+faker
+python-telegram-bot==20.7
+python-dotenv==1.0.0
