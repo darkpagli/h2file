@@ -1,128 +1,135 @@
-#By @D1_R4
-# ممنوع نشر الاداة بدون حقوقي 
-# وممنوع بيع الاداة !!
+# By @D1_R4
 import sys
-import subprocess 
-try:
-    import h2
-except ImportError:
-    print("جارٍ تثبيت حزمة h2 المطلوبة لـ HTTP/2...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "h2"])
-    import h2
 import os
 import time
-from bs4 import BeautifulSoup
-from rich.table import Table
-import os
-import signal
-import datetime 
-from datetime import date  
-try:
-  from rich.console import Console
-  import requests
-  from requests import get
-except:
-  os.system("pip install requests")
-  import requests
-  from requests import get
-try:
-  from user_agent import generate_user_agent
-except:
-  os.system("pip install user_agent")
-  from user_agent import generate_user_agent
-try:
-    import re
-    import httpx
-    import user_agent
-except:
-    os.system("pip install httpx httpx[http2] user_agent")
-    import httpx
-    import user_agent
-
-try:
-    import requests
-    import time
-    
-    import random
-    import faker
-    import uuid
-    import threading
-    import time
-except ImportError:
-    os.system("pip install requests")
-    os.system("pip install faker")
-
-import requests
-import time
-from user_agent import generate_user_agent
-import random
-import faker
-from faker import Faker
-import uuid
-from threading import Thread  
-import webbrowser
-try:
-  from hashlib import md5
-except:
-  os.system("pip install hashlib")
-  from hashlib import md5
-try:
-  from random import randrange,choice
-except:
-  os.system("pip install random")
-  from random import randrange,choice
-import os
-from random import randrange
-
-try:
-  import requests
-except:
-  os.system("pip install requests")
-  import requests
-try:
-  from user_agent import generate_user_agent
-except:
-  os.system("pip install user_agent")
-  from user_agent import generate_user_agent
-  
-try:
-  from hashlib import md5
-except:
-  os.system("pip install hashlib")
-  from hashlib import md5
-try:
-  from random import choice
-except:
-  os.system("pip install random")
-  from random import choice  
-try:
-  from concurrent.futures import ThreadPoolExecutor
-except:
-  os.system("pip install concurrent.futures")
-from concurrent.futures import ThreadPoolExecutor  
-    
-from requests import post as pp
-from user_agent import generate_user_agent as gg
-from random import choice as cc
-from random import randrange as rr
 import re
 import json
 import base64
 import string
 import logging
-from typing import Optional, Set, Dict, Any
-from rich import box
+import random
+import uuid
+import threading
+from datetime import date
+from typing import Optional
+from concurrent.futures import ThreadPoolExecutor
+import subprocess
 
+# ========== AUTO INSTALL MISSING PACKAGES ==========
+def install_package(package):
+    try:
+        __import__(package.replace('-', '_').replace('[', '').replace(']', ''))
+    except ImportError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# Install all required packages
+packages = [
+    'h2', 'beautifulsoup4', 'rich', 'requests', 
+    'user_agent', 'httpx[http2]', 'faker'
+]
+for pkg in packages:
+    install_package(pkg)
+
+# ========== IMPORTS ==========
+try:
+    from rich.console import Console
+    from rich.table import Table
+    from rich import box
+except:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "rich"])
+    from rich.console import Console
+    from rich.table import Table
+    from rich import box
+
+try:
+    import requests
+except:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "requests"])
+    import requests
+
+try:
+    from user_agent import generate_user_agent
+except:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "user_agent"])
+    from user_agent import generate_user_agent
+
+try:
+    import httpx
+except:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "httpx[http2]"])
+    import httpx
+
+try:
+    from faker import Faker
+except:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "faker"])
+    from faker import Faker
+
+try:
+    from hashlib import md5
+except:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "hashlib"])
+    from hashlib import md5
+
+try:
+    from random import randrange, choice
+except:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "random"])
+    from random import randrange, choice
+
+try:
+    from bs4 import BeautifulSoup
+except:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "beautifulsoup4"])
+    from bs4 import BeautifulSoup
+
+# ========== LOAD ENVIRONMENT VARIABLES ==========
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except:
+    pass
+
+# ========== CONFIGURATION FROM ENV ==========
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
+CHAT_ID = os.environ.get("CHAT_ID", "")
+
+# Year selection using env var or default
+YEAR_ENV = os.environ.get("YEAR", "9")  # Default to 2020
+YEAR_MAP = {
+    "1": "2012", "2": "2013", "3": "2014", "4": "2015",
+    "5": "2016", "6": "2017", "7": "2018", "8": "2019", "9": "2020"
+}
+YEAR = YEAR_MAP.get(YEAR_ENV, "2020")
+
+# Thread count
+THREADS = int(os.environ.get("THREADS", "20"))
+
+# UID ranges for different years
+UID_RANGES = {
+    "1": (220468786, 259736186),
+    "2": (310438486, 495999999),
+    "3": (1219010000, 1429010000),
+    "4": (1700000000, 2400000000),
+    "5": (3313668786, 3713668786),
+    "6": (5398785217, 5999785217),
+    "7": (7497939245, 8597939245),
+    "8": (11254029834, 21254029834),
+    "9": (40064475395, 43464475395),
+}
+UID_RANGE_START, UID_RANGE_END = UID_RANGES.get(YEAR_ENV, UID_RANGES["9"])
+
+# ========== COLOR CLASS ==========
 class Colors:
-    O = '\x1b[38;5;208m' #برتقالي
-    R = '\033[1;31m' #احمر
-    X = '\033[1;33m' #اصفر
-    F = '\033[2;32m' #اخضر
-    C = "\033[1;97m" #ابيض
-    B = '\033[2;36m'#سمائي
+    O = '\x1b[38;5;208m'
+    R = '\033[1;31m'
+    X = '\033[1;33m'
+    F = '\033[2;32m'
+    C = "\033[1;97m"
+    B = '\033[2;36m'
     K = '\033[2;35m'
     C1 = '\033[2;35m'
-    B2 = '\033[2;36m'#سمائي
+    B2 = '\033[2;36m'
     Rn = "\033[0m"
     BLUE = '\033[94m'
     RESET = '\033[0m'
@@ -132,13 +139,15 @@ class Colors:
     GREEN = '\033[92m'
     CYAN = '\033[96m'
     MAGENTA = '\033[95m'
+
+# ========== GOOGLE TL MANAGER ==========
 class GoogleTLManager:
     def __init__(self):
         self.tl_file = 'tl.txt'
         self.yy = 'azertyuiopmlkjhgfdsqwxcvbn'
         
     def _generate_random_string(self, min_len: int, max_len: int) -> str:
-        return ''.join(cc(self.yy) for _ in range(rr(min_len, max_len)))
+        return ''.join(choice(self.yy) for _ in range(randrange(min_len, max_len)))
 
     def fetch_new_tl(self) -> Optional[str]:
         try:
@@ -168,7 +177,7 @@ class GoogleTLManager:
                 "x-client-data": "CJjbygE=",
                 "x-same-domain": "1",
                 "Referrer-Policy": "strict-origin-when-cross-origin",
-                'user-agent': str(gg()),
+                'user-agent': str(generate_user_agent()),
             }
 
             session = requests.Session()
@@ -187,14 +196,14 @@ class GoogleTLManager:
                 'google-accounts-xsrf': '1',
                 'origin': 'https://accounts.google.com',
                 'referer': 'https://accounts.google.com/signup/v2/createaccount?service=mail&continue=https%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F0%2F&parent_directed=true&theme=mn&ddm=0&flowName=GlifWebSignIn&flowEntry=SignUp',
-                'user-agent': gg(),
+                'user-agent': generate_user_agent(),
             }
             data = {
                 'f.req': f'["{tok}","{n1}","{n2}","{n1}","{n2}",0,0,null,null,"web-glif-signup",0,null,1,[],1]',
                 'deviceinfo': '[null,null,null,null,null,"NL",null,null,null,"GlifWebSignIn",null,[],null,null,null,null,2,null,0,1,"",null,null,2,2]',
             }
 
-            response = pp(
+            response = requests.post(
                 'https://accounts.google.com/_/signup/validatepersonaldetails',
                 cookies=cookies,
                 headers=headers,
@@ -223,6 +232,8 @@ class GoogleTLManager:
         except:
             pass
         return self.fetch_new_tl() or ""
+
+# ========== GMAIL CHECKER ==========
 class GmailChecker:
     def __init__(self):
         self.tl_manager = GoogleTLManager()
@@ -247,12 +258,12 @@ class GmailChecker:
                 'google-accounts-xsrf': '1',
                 'origin': 'https://accounts.google.com',
                 'referer': f'https://accounts.google.com/signup/v2/createusername?service=mail&continue=https%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F0%2F&parent_directed=true&theme=mn&ddm=0&flowName=GlifWebSignIn&flowEntry=SignUp&TL={tl}',
-                'user-agent': gg(),
+                'user-agent': generate_user_agent(),
             }
             params = {'TL': tl}
             data = f'continue=https%3A%2F%2Fmail.google.com%2Fmail%2Fu%2F0%2F&ddm=0&flowEntry=SignUp&service=mail&theme=mn&f.req=%5B%22TL%3A{tl}%22%2C%22{email}%22%2C0%2C0%2C1%2Cnull%2C0%2C5167%5D&azt=AFoagUUtRlvV928oS9O7F6eeI4dCO2r1ig%3A1712322460888&cookiesDisabled=false&deviceinfo=%5Bnull%2Cnull%2Cnull%2Cnull%2Cnull%2C%22NL%22%2Cnull%2Cnull%2Cnull%2C%22GlifWebSignIn%22%2Cnull%2C%5B%5D%2Cnull%2Cnull%2Cnull%2Cnull%2C2%2Cnull%2C0%2C1%2C%22%22%2Cnull%2Cnull%2C2%2C2%5D&gmscoreversion=undefined&flowName=GlifWebSignIn&'
 
-            response = pp(
+            response = requests.post(
                 'https://accounts.google.com/_/signup/usernameavailability',
                 params=params,
                 cookies=cookies,
@@ -270,7 +281,7 @@ class GmailChecker:
         except:
             return self.check(email)
 
-
+# ========== INSTAGRAM SCRAPER ==========
 class InstagramScraper:
     @staticmethod
     def generate_android_ua() -> str:
@@ -303,38 +314,22 @@ class InstagramScraper:
     @staticmethod
     def get_rest(user: str) -> str:
         try:
-            android_ua = InstagramScraper.generate_android_ua()
-            ig_did = str(uuid.uuid4()).upper()
-            mid = base64.b64encode(uuid.uuid4().bytes).decode()[:32]
-            
             headers = {
-            'accept': '*/*',
-            'accept-encoding': 'gzip, deflate, br, zstd',
-            'accept-language': 'en-US,en;q=0.9,ar;q=0.8',
-            'content-type': 'application/x-www-form-urlencoded',
-            'origin': 'https://www.instagram.com',
-            'priority': 'u=1, i',
-            'referer': 'https://www.instagram.com/accounts/password/reset/?source=fxcal',
-            'sec-ch-prefers-color-scheme': 'dark',
-            'sec-ch-ua': '"Chromium";v="148", "Google Chrome";v="148", "Not/A)Brand";v="99"',
-            'sec-ch-ua-full-version-list': '"Chromium";v="148.0.7778.168", "Google Chrome";v="148.0.7778.168", "Not/A)Brand";v="99.0.0.0"',
-            'sec-ch-ua-mobile': '?0',
-            'sec-ch-ua-model': '""',
-            'sec-ch-ua-platform': '"Windows"',
-            'sec-ch-ua-platform-version': '"19.0.0"',
-            'sec-fetch-dest': 'empty',
-            'sec-fetch-mode': 'cors',
-            'sec-fetch-site': 'same-origin',
-            'user-agent': 'Mozilla/5.0 (iPad; CPU OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1',
-            'x-asbd-id': '359341',
-            'x-csrftoken': 'H1CoCux1VkR2aRz7WQsv8lGE95UVqIbM',
-            'x-ig-app-id': '936619743392459',
-            'x-ig-max-touch-points': '0',
-            'x-ig-www-claim': 'hmac.AR3AqgCGaNYKiaGD2p6t-h92EOVCVTLghiUNPQi3RzQ-KVuI',
-            'x-instagram-ajax': '1039957696',
-            'x-requested-with': 'XMLHttpRequest',
-        }
-                  
+                'accept': '*/*',
+                'accept-encoding': 'gzip, deflate, br, zstd',
+                'accept-language': 'en-US,en;q=0.9,ar;q=0.8',
+                'content-type': 'application/x-www-form-urlencoded',
+                'origin': 'https://www.instagram.com',
+                'referer': 'https://www.instagram.com/accounts/password/reset/?source=fxcal',
+                'user-agent': 'Mozilla/5.0 (iPad; CPU OS 17_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1',
+                'x-asbd-id': '359341',
+                'x-csrftoken': 'H1CoCux1VkR2aRz7WQsv8lGE95UVqIbM',
+                'x-ig-app-id': '936619743392459',
+                'x-ig-www-claim': 'hmac.AR3AqgCGaNYKiaGD2p6t-h92EOVCVTLghiUNPQi3RzQ-KVuI',
+                'x-instagram-ajax': '1039957696',
+                'x-requested-with': 'XMLHttpRequest',
+            }
+                      
             r = httpx.Client(http2=True, headers=headers, timeout=20).post(
                 "https://www.instagram.com/api/v1/web/accounts/account_recovery_send_ajax/",
                 data={
@@ -358,99 +353,104 @@ class InstagramScraper:
                     return "No Rest"      
             except:
                 return "No Rest"
-        
+        except:
             return "No Rest"
-        except:pass
+
     @staticmethod
     def get_info(username: str, year: str, jj: str = "gmail.com") -> str:
         try:
-            url = f"https://www.instagram.com/{username}/"
+            clean_username = username.split("@")[0]
+            api_url = "https://www.instagram.com/api/v1/users/web_profile_info/"
+            params = {"username": clean_username}
             headers = {
-            "Host": "www.instagram.com",
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:149.0) Gecko/20100101 Firefox/149.0",
-            "Accept": "*/*",
-            "Accept-Language": "en-US,en;q=0.9",
-            "X-Csrftoken": "LMkm23uLJ7sYpPsMGUDEpE",
-            "X-Ig-App-Id": "936619743392459",
-            "X-Asbd-Id": "359341",
-            "X-Ig-Www-Claim": "0",
-            "X-Requested-With": "XMLHttpRequest",
-            "Referer": f"https://www.instagram.com/{username}/?__a=1",
-        }
+                "Host": "www.instagram.com",
+                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:149.0) Gecko/20100101 Firefox/149.0",
+                "Accept": "*/*",
+                "Accept-Language": "en-US,en;q=0.9",
+                "X-Csrftoken": "LMkm23uLJ7sYpPsMGUDEpE",
+                "X-Ig-App-Id": "936619743392459",
+                "X-Asbd-Id": "359341",
+                "X-Ig-Www-Claim": "0",
+                "X-Requested-With": "XMLHttpRequest",
+                "Referer": f"https://www.instagram.com/{username}/?__a=1",
+            }
             cookies = {
-            "csrftoken": "LMkm23uLJ7sYpPsMGUDEpE",
-            "ig_did": "21D3196C-4ECC-458F-9151-64F03863854C",
-        }
+                "csrftoken": "LMkm23uLJ7sYpPsMGUDEpE",
+                "ig_did": "21D3196C-4ECC-458F-9151-64F03863854C",
+            }
+            
             try:
-                clean_username = username.split("@")[0]
-                api_url = "https://www.instagram.com/api/v1/users/web_profile_info/"
-                params = {"username": clean_username}
                 with httpx.Client(http2=True, timeout=30) as client:
                     response = client.get(api_url, headers=headers, cookies=cookies, params=params)
                     if response.status_code != 200:
-                        return {
-                        'username': username,
-                        'email': email,
-                        'url': url,
-                        'rest': self.get_rest_info(username)
-                    }
+                        return f'''
+╔   ─────━ ░ 𝔾𝕦𝕥𝕤 ░ ━─────   ╗
+ ⌦ [ Instagram ] 
+     ✺ Username : @{clean_username} 
+     ✺ Email : {clean_username}@{jj}
+     ✺ Date Account : {year}
+     ✺ Rest : {InstagramScraper.get_rest(clean_username)}
+ ◢─────━ ░ 𝔾𝕦𝕥𝕤 ░━──────◣
+        ❝ By @D1_R4 ❞
+        '''
                     data = response.json()['data']['user']
                     name = data.get('full_name', '')
                     followers = data.get('edge_followed_by', {}).get('count', 0)
                     following = data.get('edge_follow', {}).get('count', 0)
                     posts = data.get('edge_owner_to_timeline_media', {}).get('count', 0)
+                    rest = InstagramScraper.get_rest(clean_username)
 
                     return f'''
 ╔   ─────━ ░ 𝔾𝕦𝕥𝕤 ░ ━─────   ╗
- ⌦ [ Gmail ] 
-     ✺ 𝚗𝚊𝚖𝚎 : {name}
-     ✺ username : @{clean_username} 
-     ✺ 𝙴𝚖𝚊𝚒𝚕 {username}@{jj}
-     ✺ 𝚏𝚘𝚕𝚕𝚘𝚠𝚎𝚛𝚜 : {followers}
-     ✺ 𝚏𝚘𝚕𝚕𝚘𝚠𝚒𝚗𝚐 : {following}
-     ✺ 𝚙𝚘𝚜𝚝𝚜 : {posts}
+ ⌦ [ Instagram ] 
+     ✺ Name : {name}
+     ✺ Username : @{clean_username} 
+     ✺ Email : {clean_username}@{jj}
+     ✺ Followers : {followers}
+     ✺ Following : {following}
+     ✺ Posts : {posts}
      ✺ Date Account : {year}
-     ✺ 𝗨𝗥𝗟: https://www.instagram.com/{clean_username}/ 
-     ✺ 𝚛𝚎𝚜𝚝 : {InstagramScraper.get_rest(clean_username)}
- ◢─────━ ░ 𝔾𝕦𝕥𝕤 ░━──────◣
-        ❝ By @D1_R4 ❞
-    '''
-            except:
-                pass
-                return f'''
-╔   ─────━ ░ 𝔾𝕦𝕥𝕤 ░ ━─────   ╗
- ⌦ [ Gmail ] 
-     ✺ username : @{clean_username} 
-     ✺ 𝙴𝚖𝚊𝚒𝚕 {clean_username}@{jj}
-     ✺ 𝗨𝗥𝗟: https://www.instagram.com/{username}/ 
-     ✺ 𝚛𝚎𝚜𝚝 : {InstagramScraper.get_rest(clean_username)}
+     ✺ URL: https://www.instagram.com/{clean_username}/ 
+     ✺ Rest : {rest}
  ◢─────━ ░ 𝔾𝕦𝕥𝕤 ░━──────◣
         ❝ By @D1_R4 ❞
         '''
-        except:pass
+            except:
+                return f'''
+╔   ─────━ ░ 𝔾𝕦𝕥𝕤 ░ ━─────   ╗
+ ⌦ [ Instagram ] 
+     ✺ Username : @{clean_username} 
+     ✺ Email : {clean_username}@{jj}
+     ✺ Date Account : {year}
+     ✺ URL: https://www.instagram.com/{clean_username}/ 
+     ✺ Rest : {InstagramScraper.get_rest(clean_username)}
+ ◢─────━ ░ 𝔾𝕦𝕥𝕤 ░━──────◣
+        ❝ By @D1_R4 ❞
+        '''
+        except:
+            return "Error fetching info"
 
+# ========== TELEGRAM NOTIFIER ==========
 class TelegramNotifier:
     def __init__(self, token: str, chat_id: str):
         self.token = token
         self.chat_id = chat_id
         
     def send(self, text: str) -> bool:
-   
         def _send():
             try:
                 requests.get(f"https://api.telegram.org/bot{self.token}/sendMessage?chat_id={self.chat_id}&text={text}", timeout=3)
             except:
                 pass
-        Thread(target=_send).start()
+        threading.Thread(target=_send).start()
         return True
 
-
+# ========== ACCOUNT VALIDATOR ==========
 class AccountValidator:
     def __init__(self, token: str, chat_id: str, year: str):
         self.telegram = TelegramNotifier(token, chat_id)
         self.gmail_checker = GmailChecker()
         self.year = year
-        
         self.hits = 0
         self.bads_instagram = 0
         self.bads_email = 0
@@ -465,97 +465,62 @@ class AccountValidator:
 
     def display_status(self, current_email: str = ""):
         self.current_email = current_email
-        os.system('clear' if os.name == 'posix' else 'cls')
         print(f"""
 {Colors.C}+------------------------------------------+
 | {Colors.F}[1]{Colors.F} Hits ==> {Colors.F}[ {self.hits} ] 
-
 | {Colors.R}[2]{Colors.R} Bad  ==> {Colors.R}[ {self.bads_instagram} ] 
-
 | {Colors.X}[3]{Colors.X} Email Not Avail.==> {Colors.X}[ {self.bads_email} ]
-
 | {Colors.X}[4]{Colors.X} Email  ==> {Colors.X}[ {current_email} ]   
-
 | {Colors.B}By: @D1_R4 | @D1_R444{Colors.B}                    
 {Colors.C}+------------------------------------------+
 """)
 
     def process_email(self, email: str):
         try:
-            csrftoken = md5(str(time.time()).encode()).hexdigest()
-            android_ua = InstagramScraper.generate_android_ua()
-            ua = generate_user_agent()
-            pp_choice = choice('00')
-            
-
             self.display_status(email)
             
-            if pp_choice == '0':
-                headers = {
-                    'accept': '*/*',
-                    'accept-language': 'en-US,en;q=0.9',
-                    'content-type': 'application/x-www-form-urlencoded',
-                    'origin': 'https://www.instagram.com',
-                    'referer': 'https://www.instagram.com/accounts/signup/email/',
-                    'user-agent': ua,
-                    'x-csrftoken': csrftoken
-                }
+            android_ua = InstagramScraper.generate_android_ua()
+            csrftoken = md5(str(time.time()).encode()).hexdigest()
+            
+            headers = {
+                'accept': '*/*',
+                'accept-language': 'en-US,en;q=0.9',
+                'content-type': 'application/x-www-form-urlencoded',
+                'origin': 'https://www.instagram.com',
+                'referer': 'https://www.instagram.com/accounts/signup/email/',
+                'user-agent': android_ua,
+                'x-csrftoken': csrftoken
+            }
+            
+            try:
                 client = httpx.Client(http2=True, timeout=10, limits=httpx.Limits(max_connections=100))
                 response = client.post(
                     "https://i.instagram.com/api/v1/users/check_email/", 
                     data=f"email={email}", 
-                    headers={'User-Agent': android_ua, 'content-type': "application/x-www-form-urlencoded; charset=UTF-8"}
+                    headers=headers
                 )
                 client.close()
+                
                 if 'email_is_taken' in str(response.text):
-                    self.handle_valid_email(email)
+                    if 'good' == self.gmail_checker.check(email):
+                        self.update_stats(hits=1)
+                        username, jj = email.split('@')
+                        msg = InstagramScraper.get_info(username, self.year, jj)
+                        
+                        with open('hits1.txt', 'a', encoding='utf-8') as ff:
+                            ff.write(f'{msg}\n')
+                        
+                        self.telegram.send(msg)
+                    else:
+                        self.update_stats(bad_email=1)
                 else:
                     self.update_stats(bad_insta=1)
-            elif pp_choice == '1':
-                headers = {
-                    'accept': '*/*',
-                    'accept-language': 'en-US,en;q=0.9',
-                    'content-type': 'application/x-www-form-urlencoded',
-                    'origin': 'https://www.instagram.com',
-                    'referer': 'https://www.instagram.com/?lang=en-US&hl=en-gb',
-                    'user-agent': ua,
-                    'x-csrftoken': csrftoken,
-                }
-                data = {'username': email.split('@')[0]}
-                response = requests.post('https://www.instagram.com/api/v1/web/accounts/login/ajax/', headers=headers, data=data, timeout=10).text
-                if '"user":true' in response:
-                    self.handle_valid_email(email)
-                else:
-                    self.update_stats(bad_insta=1)
-                    
+            except:
+                self.update_stats(bad_insta=1)
         except:
             self.update_stats(bad_insta=1)
 
-    def handle_valid_email(self, email: str):
-        try:
-            if 'good' == self.gmail_checker.check(email):
-                username, jj = email.split('@')
-                self.update_stats(hits=1)
-                
-
-                if self.hits % 10 == 0 and os.path.exists("tl.txt"):
-                    os.remove("tl.txt")
-                    
-                msg = InstagramScraper.get_info(username, self.year, jj)
-                
- 
-                with open('hits1.txt', 'a', encoding='utf-8') as ff:
-                    ff.write(f'{msg}\n')
-                
-
-                self.telegram.send(msg)
-                
-            else:
-                self.update_stats(bad_email=1)
-        except:
-            self.update_stats(bad_email=1)
-
-
+# ========== USER COLLECTOR ==========
 class UserCollector:
     def __init__(self, validator: AccountValidator, uid1: int, uid2: int):
         self.validator = validator
@@ -571,57 +536,34 @@ class UserCollector:
                 self.ids_set.add(Id)
                 return Id
 
-    def start(self, num_threads: int = 50):
+    def start(self, num_threads: int = 20):
         def worker():
             while True:
                 try:
-                    rnd = str(random.randint(150, 999))
-                    user_agent_str = (
-                        "Instagram 311.0.0.32.118 Android ("
-                        + random.choice(["23/6.0", "24/7.0", "25/7.1.1", "26/8.0", "27/8.1", "28/9.0"])
-                        + "; "
-                        + str(random.randint(100, 1300))
-                        + "dpi; "
-                        + str(random.randint(200, 2000))
-                        + "x"
-                        + str(random.randint(200, 2000))
-                        + "; "
-                        + random.choice(["SAMSUNG", "HUAWEI", "LGE/lge", "HTC", "ASUS", "ZTE", "ONEPLUS", "XIAOMI", "OPPO", "VIVO", "SONY", "REALME", "INFINIX"])
-                        + "; SM-T"
-                        + rnd
-                        + "; SM-T"
-                        + rnd
-                        + "; qcom; en_US; 545986"
-                        + str(random.randint(111, 999))
-                        + ")"
-                    )
-
                     Id = self._rand_id()
-                    lsd = ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=32))
-
+                    
                     headers = {
                         'accept': '*/*',
                         'accept-language': 'en,en-US;q=0.9',
                         'content-type': 'application/x-www-form-urlencoded',
                         'dnt': '1',
                         'origin': 'https://www.instagram.com',
-                        'priority': 'u=1, i',
-                        'referer': 'https://www.instagram.com/cristiano/following/',
-                        'user-agent': user_agent_str,
+                        'referer': 'https://www.instagram.com/',
+                        'user-agent': InstagramScraper.generate_android_ua(),
                         'x-fb-friendly-name': 'PolarisUserHoverCardContentV2Query',
-                        'x-fb-lsd': lsd,
+                        'x-fb-lsd': ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=32)),
                     }
 
                     data = {
-                        'lsd': lsd,
+                        'lsd': ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=32)),
                         'fb_api_caller_class': 'RelayModern',
                         'fb_api_req_friendly_name': 'PolarisUserHoverCardContentV2Query',
-                        'variables': f'{{"userID":"{Id}","username":"cristiano"}}',
+                        'variables': f'{{"userID":"{Id}","username":""}}',
                         'server_timestamps': 'true',
                         'doc_id': '7666785636679494',
                     }
 
-                    response = requests.post('https://www.instagram.com/api/graphql', headers=headers, data=data)
+                    response = requests.post('https://www.instagram.com/api/graphql', headers=headers, data=data, timeout=10)
                     resp_json = response.json()
 
                     user_data = resp_json.get('data', {}).get('user', {})
@@ -644,14 +586,21 @@ class UserCollector:
                 except:
                     continue
 
+        threads = []
         for _ in range(num_threads):
-            Thread(target=worker).start()
+            t = threading.Thread(target=worker)
+            t.daemon = True
+            t.start()
+            threads.append(t)
+        
+        for t in threads:
+            t.join()
 
-
+# ========== MAIN ==========
 def main():
     console = Console()
     
-
+    # Show banner
     table = Table(show_header=False, box=box.ASCII, pad_edge=False)
     table.add_column(justify="center", width=30)
     table.add_row("The Tool By : Guts")
@@ -660,66 +609,34 @@ def main():
     table.add_row("instagram Gmail")
     console.print(table)
     
+    print(f"""
+{Colors.C}+------------------------------------------+
+| Starting Bot on Railway...
+| Selected Year: {YEAR}
+| Threads: {THREADS}
+| UID Range: {UID_RANGE_START} - {UID_RANGE_END}
+| Bot Token: {'✓ Set' if BOT_TOKEN else '✗ Missing'}
+| Chat ID: {'✓ Set' if CHAT_ID else '✗ Missing'}
++------------------------------------------+
+{Colors.Rn}
+    """)
     
-
+    if not BOT_TOKEN or not CHAT_ID:
+        print(f"""
+{Colors.R}⚠️ ERROR: BOT_TOKEN and CHAT_ID must be set in environment variables!{Colors.Rn}
+Please add them in Railway Dashboard → Variables tab.
+        """)
+        return
     
-    
-    sh = f"""
- {Colors.B}Choose The Year :{Colors.Rn}
----------------------------------	
-{Colors.B}
- 1- (2012)
- 2- (2013)
- 3- (2014)
- 4- (2015)
- 5- (2016)
- 6- (2017)
- 7- (2018)
- 8- (2019)
- 9- (2020)
- {Colors.Rn}
----------------------------------	 
-"""
-    print(sh)
-    
-    ch = console.input("\n[cyan]>> [/cyan]")
-    while ch not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-        console.print("[red]❌ Invalid![/red]")
-        ch = console.input("[cyan]>> [/cyan]")
-    
-    print("\n")
-    token = "8696983600:AAGUjUJ7KrADo8Xa3--NU7dClihSb70NF3g"
-    print("\n")
-    chat_id = "8575605469"
-    
-
-    year_map = {
-        "1": "2012", "2": "2013", "3": "2014", "4": "2015",
-        "5": "2016", "6": "2017", "7": "2018", "8": "2019", "9": "2020"
-    }
-    year = year_map[ch]
-    
-
-    uid_ranges = {
-        "1": (220468786, 259736186),
-        "2": (310438486, 495999999),
-        "3": (1219010000, 1429010000),
-        "4": (1700000000, 2400000000),
-        "5": (3313668786, 3713668786),
-        "6": (5398785217, 5999785217),
-        "7": (7497939245, 8597939245),
-        "8": (11254029834, 21254029834),
-        "9": (40064475395, 43464475395),
-    }
-    
-    os.system('clear')
+    # Initialize and start
+    print(f"{Colors.F}✓ Initializing Google TL...{Colors.Rn}")
     GoogleTLManager().fetch_new_tl()
     time.sleep(0.2)
-    os.system('clear')
-    validator = AccountValidator(token, chat_id, year)
-    uid1, uid2 = uid_ranges[ch]
-    collector = UserCollector(validator, uid1, uid2)
-    collector.start()
+    
+    print(f"{Colors.F}✓ Starting bot...{Colors.Rn}")
+    validator = AccountValidator(BOT_TOKEN, CHAT_ID, YEAR)
+    collector = UserCollector(validator, UID_RANGE_START, UID_RANGE_END)
+    collector.start(THREADS)
 
 if __name__ == "__main__":
     main()
