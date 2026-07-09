@@ -3,9 +3,8 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "numReplicas": 1,
+    "startCommand": "python3 h2.py",
     "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 10,
-    "startCommand": "python h2.py"
+    "restartPolicyMaxRetries": 10
   }
 }
